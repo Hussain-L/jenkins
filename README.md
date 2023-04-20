@@ -1,2 +1,3 @@
 # jenkins 
 fr
+rw
