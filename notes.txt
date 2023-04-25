@@ -1,0 +1,104 @@
+SSM Agent is preinstalled in many AMI. And it starts automatically.
+
+On all supported operating systems including Linux and Windows Server, 
+you can download and install the CloudWatch agent using either the command line with an 
+Amazon S3 download link, using Amazon EC2 Systems Manager, or using an AWS CloudFormation template.
+
+The CloudWatch agent is available as a package in Amazon Linux 2. 
+If you are using this operating system, you can install the package by entering the following command. 
+
+#sudo yum install amazon-cloudwatch-agent -y
+
+
+configfile:
+{
+        "agent": {
+                "metrics_collection_interval": 60,
+                "run_as_user": "root"
+        },
+        "metrics": {
+                "aggregation_dimensions": [
+                        [
+                                "InstanceId"
+                        ]
+                ],
+                "append_dimensions": {
+                        "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
+                        "ImageId": "${aws:ImageId}",
+                        "InstanceId": "${aws:InstanceId}",
+                        "InstanceType": "${aws:InstanceType}"
+                },
+                "metrics_collected": {
+                        "disk": {
+                                "measurement": [
+                                        "used_percent"
+                                ],
+                                "metrics_collection_interval": 60,
+                                "resources": [
+                                        "*"
+                                ]
+                        },
+                        "mem": {
+                                "measurement": [
+                                        "mem_used_percent"
+                                ],
+                                "metrics_collection_interval": 60
+                        }
+                }
+        }
+}
+
+
+To congifure the cloudwatch file:
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+
+The configure file is stored at:
+ /opt/aws/amazon-cloudwatch-agent/bin/config.json.
+
+To start the cloudwatch agent using the above config file:
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+status check:
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
+
+Remove Cloudwatch agent:
+sudo yum remove amazon-cloudwatch-agent -y
+
+{
+    \"agent\": {
+            \"metrics_collection_interval\": 60,
+            \"run_as_user\": \"root\"
+    },
+    \"metrics\": {
+            \"aggregation_dimensions\": [
+                    [
+                            \"InstanceId\"
+                    ]
+            ],
+            \"append_dimensions\": {
+                    \"AutoScalingGroupName\": \"${aws:AutoScalingGroupName}\",
+                    \"ImageId\": \"${aws:ImageId}\",
+                    \"InstanceId\": \"${aws:InstanceId}\",
+                    \"InstanceType\": \"${aws:InstanceType}\"
+            },
+            \"metrics_collected\": {
+                    \"disk\": {
+                            \"measurement\": [
+                                    \"used_percent\"
+                            ],
+                            \"metrics_collection_interval\": 60,
+                            \"resources\": [
+                                    \"*\"
+                            ]
+                    },
+                    \"mem\": {
+                            \"measurement\": [
+                                    \"mem_used_percent\"
+                            ],
+                            \"metrics_collection_interval\": 60
+                    }
+            }
+    }
+}
+
+https://usefulbicorp.webhook.office.com/webhookb2/902fdd6f-d3b0-481d-a58c-a43d8bb2cc27@52fdccfd-9751-451a-b34f-9d3be8f41be7/IncomingWebhook/fc6d3cb795fb436ea2b0b579a5cfa4f5/7add3dfa-9e77-4124-abcf-1901c41be35b
